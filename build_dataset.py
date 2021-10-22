@@ -45,7 +45,7 @@ for (dType, zippedPaths, baseOutput) in datasets:
 		#imagePath, label_name = zip(*zippedPath)
 		
 		# extract the filename of the input image
-		filename = image.split(os.path.sep)[-1]
+		filename = imagePath.split(os.path.sep)[-1]
 		
 		# build the path to the label directory
 		label_directory = os.path.sep.join([baseOutput, label_name])
