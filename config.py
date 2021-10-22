@@ -24,6 +24,11 @@ with open(CLASS_NAMES_FILE, "r") as f:
 # set the batch size
 BATCH_SIZE = 32
 
+# initialize our number of epochs, early stopping patience, initial learning rate
+NUM_EPOCHS = 40
+EARLY_STOPPING_PATIENCE = 5
+INIT_LR = 1e-2
+
 # the amount of validation data will be a percentage of the training data
 VAL_SPLIT = 0.1
 
