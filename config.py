@@ -24,6 +24,9 @@ with open(CLASS_NAMES_FILE, "r") as f:
 # set the batch size
 BATCH_SIZE = 32
 
+# the amount of validation data will be a percentage of the training data
+VAL_SPLIT = 0.1
+
 # initialize the label encoder file path and the output directory to
 # where the extracted features (in CSV file format) will be stored
 LE_PATH = os.path.sep.join(["output", "le.cpickle"])
