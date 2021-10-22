@@ -23,3 +23,10 @@ with open(CLASS_NAMES_FILE, "r") as f:
 
 # set the batch size
 BATCH_SIZE = 32
+
+# initialize the label encoder file path and the output directory to
+# where the extracted features (in CSV file format) will be stored
+LE_PATH = os.path.sep.join(["output", "le.cpickle"])
+BASE_CSV_PATH = "output"
+# set the path to the serialized model after training
+MODEL_PATH = os.path.sep.join(["output", "model.cpickle"])
