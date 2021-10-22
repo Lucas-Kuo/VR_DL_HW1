@@ -7,19 +7,23 @@ import os
 
 # grab the paths to all input images in the original input directory and shuffle them
 imagePaths = list(paths.list_images(config.ORIG_INPUT_DATASET))
+
+random.seed(42)
+random.shuffle(imagePaths)
+
+# get the labels of training images
 training_labels = []
 with open(config.TRAIN_LABEL_PATH) as f:
 	for line in f:
 		training_labels.append(line)
-
-random.seed(42)
-random.shuffle(imagePaths)
 
 # key: image_name
 # value: label
 filename_class_pair = {}
 
 for training_label in training_labels:
+	# the pattern of training_label is: {filename} {label_name}
+	# so we split the string with a whitespace
 	filename, label = training_label.split()
 	filename_class_pair[filename] = label
 	
@@ -52,6 +56,7 @@ for (dType, imagePaths, baseOutput) in datasets:
 		# extract the filename of the input image
 		filename = imagePath.split(os.path.sep)[-1]
 		
+		# check the label of this image
 		label_name = filename_class_pair[filename]
 		
 		# build the path to the label directory
