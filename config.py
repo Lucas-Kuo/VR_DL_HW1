@@ -8,11 +8,10 @@ ORIG_INPUT_DATASET = "training_images"
 # our images after computing the training and testing split
 BASE_PATH = "dataset"
 
-# define the names of the training, testing, and validation
-# directories
-TRAIN = "training"
-TEST = "evaluation"
-VAL = "validation"
+# derive the training, validation, and testing directories
+TRAIN_PATH = os.path.sep.join([BASE_PATH, "training"])
+VAL_PATH = os.path.sep.join([BASE_PATH, "validation"])
+TEST_PATH = os.path.sep.join([BASE_PATH, "testing"])
 
 # initialize the list of class label names
 CLASSES = []
