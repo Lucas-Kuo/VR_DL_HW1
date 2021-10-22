@@ -19,8 +19,8 @@ TEST_PATH = os.path.sep.join([BASE_PATH, "testing"])
 CLASSES = []
 CLASS_NAMES_FILE = "classes.txt"
 with open(CLASS_NAMES_FILE, "r") as f:
-	for line in f:
-		CLASSES.append(line)
+    for line in f:
+        CLASSES.append(line)
 
 # set the batch size
 BATCH_SIZE = 32
