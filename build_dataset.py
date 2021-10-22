@@ -39,8 +39,10 @@ for (dType, zippedPaths, baseOutput) in datasets:
 
 	# loop over the input image paths
 	for zippedPath in zippedPaths:
-		# unzip the 
-		imagePath, label_name = zip(*zippedPath)
+		# extract the image path and its label
+		imagePath = zippedPath[0]
+		label_name = zippedPath[1]
+		#imagePath, label_name = zip(*zippedPath)
 		
 		# extract the filename of the input image
 		filename = image.split(os.path.sep)[-1]
