@@ -2,7 +2,7 @@
 import os
 
 # initialize the path to the *original* input directory of images
-
+ORIG_INPUT_DATASET = "training_images"
 
 # initialize the base path to the *new* directory that will contain
 # our images after computing the training and testing split
