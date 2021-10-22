@@ -30,11 +30,11 @@ datasets = [
 # loop over the datasets
 for (dType, zippedPaths, baseOutput) in datasets:
 	# show which data split we are creating
-	print("[INFO] 'building {}' split".format(dType))
+	print("[INFO] building '{}' split".format(dType))
 	
 	# if the output base output directory does not exist, create it
 	if not os.path.exists(baseOutput):
-		print("[INFO] 'creating {}' directory".format(baseOutput))
+		print("[INFO] creating '{}' directory".format(baseOutput))
 		os.makedirs(baseOutput)
 
 	# loop over the input image paths
@@ -52,7 +52,7 @@ for (dType, zippedPaths, baseOutput) in datasets:
 		
 		# if the label output directory does not exist, create it
 		if not os.path.exists(label_directory):
-			print("[INFO] 'creating {}' directory".format(label_directory))
+			print("[INFO] creating '{}' directory".format(label_directory))
 			os.makedirs(label_directory)
 		
 		# construct the path to the destination image and then copy
