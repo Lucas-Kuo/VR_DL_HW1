@@ -22,6 +22,15 @@ with open(CLASS_NAMES_FILE, "r") as f:
     for line in f:
         CLASSES.append(line)
 
+# build class directories for training and validation datasets
+for split in (TRAIN_PATH, VAL_PATH):
+    for labels in CLASSES:
+        label_directory = os.path.sep.join([split, labels])
+        if not os.path.exists(label_directory):
+            print("[INFO] creating '{}' directory".format(label_directory))
+            os.makedirs(label_directory)
+ 
+        
 # set the batch size
 BATCH_SIZE = 32
 
