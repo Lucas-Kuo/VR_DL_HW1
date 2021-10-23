@@ -20,6 +20,7 @@ CLASSES = []
 CLASS_NAMES_FILE = "classes.txt"
 with open(CLASS_NAMES_FILE, "r") as f:
     for line in f:
+        line = line[:-1]  # remove the trailing \n
         CLASSES.append(line)
 
 # build class directories for training and validation datasets
