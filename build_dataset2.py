@@ -37,6 +37,7 @@ for class_name in class_file_pairs:
     random.shuffle(class_file_pairs[class_name])
 
 # saving images to the 'dataset' directory
+ print("[INFO] building dataset...")
 for class_name in class_file_pairs:
     # on average, there should be 15 images for each class
     # therefore, we split 2 of them(~15%) for validation and the rest for training
