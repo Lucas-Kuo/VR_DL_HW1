@@ -4,7 +4,7 @@ import numpy as np
 import os
 import tensorflow as tf
 from tensorflow.data import AUTOTUNE
-from tensorflow.keras.layers.experimental.preprocessing import RandomRotation
+from tensorflow.keras.layers.experimental.preprocessing import RandomRotation, RandomZoom, RandomFlip
 from tensorflow.keras.applications.efficientnet import preprocess_input
 from imutils import paths
 
@@ -37,15 +37,6 @@ def load_images(imagePath):
 	# no label is available for testing dataset
 	label = None
 	
-	# return the image and the label
-	return (image, label)
-
-# this decorator converts the function into a TensorFlow-callable graph,
-# which allows TensorFlow to optimize it and make it much faster
-@tf.function
-def augment(image, label):
-	# perform random horizontal flips
-	image = tf.image.random_flip_left_right(image)
 	# return the image and the label
 	return (image, label)
 
@@ -108,17 +99,27 @@ def plot_graph(history):
     plt.xlabel('epoch')
     plt.show()
 
-# grab all the training, validation, and testing dataset image paths
+# grab all the training and validation dataset image paths
 trainPaths = list(paths.list_images(config.TRAIN_PATH))
 valPaths = list(paths.list_images(config.VAL_PATH))
-testPaths = list(paths.list_images(config.TEST_PATH))
+
+# the data augmentation I adopt includes horizontal flipping,
+# rotation , zomming in and contrast adjustment
+trainAugmentation = tf.keras.Sequential([
+	RandomRotation(0.3),
+	tf.keras.layers.RandomContrast(0.5, seed=None),
+	RandomZoom(
+		height_factor=(-0.05, -0.15),
+		width_factor=(-0.05, -0.15)),
+	RandomFlip("horizontal")
+])
 
 # build the training dataset and data input pipeline
 train_dataset = tf.data.Dataset.from_tensor_slices(trainPaths)
 train_dataset = (train_dataset
 	.shuffle(len(trainPaths))
 	.map(load_images, num_parallel_calls=AUTOTUNE)
-	.map(augment, num_parallel_calls=AUTOTUNE)
+	.map(lambda x, y: (trainAugmentation(x), y), num_parallel_calls=AUTOTUNE)
 	.cache()
 	.batch(config.BATCH_SIZE)
 	.prefetch(AUTOTUNE)
@@ -127,15 +128,6 @@ train_dataset = (train_dataset
 # build the validation dataset and data input pipeline
 val_dataset = tf.data.Dataset.from_tensor_slices(valPaths)
 val_dataset = (val_dataset
-	.map(load_images, num_parallel_calls=AUTOTUNE)
-	.cache()
-	.batch(config.BATCH_SIZE)
-	.prefetch(AUTOTUNE)
-)
-
-# build the testing dataset and data input pipeline
-test_dataset = tf.data.Dataset.from_tensor_slices(testPaths)
-test_dataset = (test_dataset
 	.map(load_images, num_parallel_calls=AUTOTUNE)
 	.cache()
 	.batch(config.BATCH_SIZE)
