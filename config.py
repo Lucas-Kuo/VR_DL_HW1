@@ -31,17 +31,23 @@ for split in (TRAIN_PATH, VAL_PATH):
             print("[INFO] creating '{}' directory".format(label_directory))
             os.makedirs(label_directory)
  
-        
+
+# set the image size and shape
+IMG_SIZE = (600,600)
+IMG_SHAPE = IMG_SIZE + (3,)
+
 # set the batch size
 BATCH_SIZE = 32
 
 # initialize our number of epochs, early stopping patience, initial learning rate
 NUM_EPOCHS = 40
 EARLY_STOPPING_PATIENCE = 5
-INIT_LR = 1e-2
+INIT_LR = 1e-3
 
-# the amount of validation data will be a percentage of the training data
-VAL_SPLIT = 0.1
+# set the directory to save our trained model's weight
+WEIGHT_PATH = "weightings"
+print("[INFO] creating '{}' directory".format(WEIGHT_PATH))
+os.makedirs(WEIGHT_PATH)
 
 # initialize the label encoder file path and the output directory to
 # where the extracted features (in CSV file format) will be stored
