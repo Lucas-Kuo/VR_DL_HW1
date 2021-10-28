@@ -1,8 +1,11 @@
+# inport necessary packages
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 import tensorflow as tf
 from tensorflow.data import AUTOTUNE
+from tensorflow.keras.layers.experimental.preprocessing import RandomRotation
+from tensorflow.keras.applications.efficientnet import preprocess_input
 from imutils import paths
 
 import config
@@ -31,7 +34,7 @@ def load_images(imagePath):
 	image = tf.image.convert_image_dtype(image, dtype=tf.float32)
 	image = tf.image.resize(image, config.IMAGE_SIZE)
     
-	# parse the class label from the file path
+	# no label is available for testing dataset
 	label = None
 	
 	# return the image and the label
@@ -56,17 +59,17 @@ def build_model():
     # trainability of the base model layers
     base_model.trainable = False
     
-    # the data augmentation I do includes horizontal flipping(Line 29),
+    # the data augmentation I adopt includes horizontal flipping(Line 29),
     # rotation and contrast adjustment
     data_augmentation = tf.keras.Sequential([
-        tf.keras.layers.experimental.preprocessing.RandomRotation(0.2),
+        RandomRotation(0.2),
         tf.keras.layers.RandomContrast(0.5, seed=None)
     ])
     
     # constructing the model
     inputs = tf.keras.Input(shape=config.IMG_SHAPE)
     x = data_augmentation(inputs)
-    x = tf.keras.applications.efficientnet.preprocess_input(x)
+    x = preprocess_input(x)
     x = base_model(x, training=False)
     x = tf.keras.layers.AveragePooling2D(pool_size=(19, 19))(x)
     x = layers.BatchNormalization()(x)
