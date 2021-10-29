@@ -17,7 +17,7 @@ def load_images(imagePath):
 	image = tf.io.read_file(imagePath)
 	image = tf.image.decode_png(image, channels=3)
 	image = tf.image.convert_image_dtype(image, dtype=tf.float32)
-	image = tf.image.resize(image, config.IMAGE_SIZE)
+	image = tf.image.resize(image, config.IMG_SIZE)
     
 	# parse the class label from the file path
 	label = tf.strings.split(imagePath, os.path.sep)[-2]
@@ -32,7 +32,7 @@ def load_images(imagePath):
 	image = tf.io.read_file(imagePath)
 	image = tf.image.decode_png(image, channels=3)
 	image = tf.image.convert_image_dtype(image, dtype=tf.float32)
-	image = tf.image.resize(image, config.IMAGE_SIZE)
+	image = tf.image.resize(image, config.IMG_SIZE)
     
 	# no label is available for testing dataset
 	label = None
