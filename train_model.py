@@ -26,21 +26,6 @@ def load_images(imagePath):
 	# return the image and the label
 	return (image, label)
 
-# for unlabeled images, i.e. testing/evaluation dataset
-def load_images(imagePath):
-	# read the image from disk, decode it, convert the data type to
-	# floating point, and resize it
-	image = tf.io.read_file(imagePath)
-	image = tf.image.decode_png(image, channels=3)
-	image = tf.image.convert_image_dtype(image, dtype=tf.float32)
-	image = tf.image.resize(image, config.IMG_SIZE)
-    
-	# no label is available for testing dataset
-	label = None
-	
-	# return the image and the label
-	return (image, label)
-
 # build the model we'll be using
 def build_model():
     # the base model I use this time is EfficientNet B7
@@ -53,15 +38,15 @@ def build_model():
     
     # the data augmentation I adopt includes horizontal flipping(Line 29),
     # rotation and contrast adjustment
-    data_augmentation = tf.keras.Sequential([
-        RandomRotation(0.2),
-        tf.keras.layers.RandomContrast(0.5, seed=None)
-    ])
+#     data_augmentation = tf.keras.Sequential([
+#         RandomRotation(0.2),
+#         tf.keras.layers.RandomContrast(0.5, seed=None)
+#     ])
     
     # constructing the model
     inputs = tf.keras.Input(shape=config.IMG_SHAPE)
-    x = data_augmentation(inputs)
-    x = preprocess_input(x)
+#     x = data_augmentation(inputs)
+    x = preprocess_input(inputs)
     x = base_model(x, training=False)
     x = tf.keras.layers.AveragePooling2D(pool_size=(19, 19))(x)
     x = tf.keras.layers.BatchNormalization()(x)
