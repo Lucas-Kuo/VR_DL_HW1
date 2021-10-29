@@ -23,6 +23,7 @@ def load_images(imagePath):
 	# parse the class label from the file path
 	label = tf.strings.split(imagePath, os.path.sep)[-2][:3]
 	label = tf.strings.to_number(label, tf.int32)
+	label = label.numpy()
 	label_vector = np.zeros((1,200))
 	label_vector[0][label-1] = 1
 	
