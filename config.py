@@ -46,8 +46,9 @@ INIT_LR = 1e-3
 
 # set the directory to save our trained model's weight
 WEIGHT_PATH = "weightings"
-print("[INFO] creating '{}' directory".format(WEIGHT_PATH))
-os.makedirs(WEIGHT_PATH)
+if not os.path.exists(WEIGHT_PATH):
+    print("[INFO] creating '{}' directory".format(WEIGHT_PATH))
+    os.makedirs(WEIGHT_PATH)
 
 # initialize the label encoder file path and the output directory to
 # where the extracted features (in CSV file format) will be stored
