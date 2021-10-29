@@ -21,7 +21,7 @@ def load_images(imagePath):
 	image = tf.image.resize(image, config.IMG_SIZE)
     
 	# parse the class label from the file path
-	label = tf.strings.split(imagePath, os.path.sep).numpy()[-2].decode('UTF-8')
+	label = (tf.strings.split(imagePath, os.path.sep).numpy())[-2].decode('UTF-8')
 	label = tf.strings.to_number(label, tf.int32)
 	label = label.numpy()
 	label_vector = np.zeros((1,200))
