@@ -21,10 +21,13 @@ def load_images(imagePath):
 	image = tf.image.resize(image, config.IMG_SIZE)
     
 	# parse the class label from the file path
-	label = tf.strings.split(imagePath, os.path.sep)[-2]
+	label = tf.strings.split(imagePath, os.path.sep)[-2][:3]
+	label = tf.strings.to_number(label, tf.int32)
+	label_vector = np.zeros((2,200))
+	label_vector[1][label-1] = 1
 	
 	# return the image and the label
-	return (image, label)
+	return (image, label_vector)
 
 # build the model we'll be using
 def build_model():
