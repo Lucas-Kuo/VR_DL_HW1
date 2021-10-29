@@ -4,6 +4,7 @@ import numpy as np
 import os
 import tensorflow as tf
 from tensorflow.data import AUTOTUNE
+from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.layers.experimental.preprocessing import RandomRotation, RandomZoom, RandomFlip
 from tensorflow.keras.applications.efficientnet import preprocess_input
 from imutils import paths
