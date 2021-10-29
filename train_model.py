@@ -63,7 +63,7 @@ def build_model():
     x = preprocess_input(x)
     x = base_model(x, training=False)
     x = tf.keras.layers.AveragePooling2D(pool_size=(19, 19))(x)
-    x = layers.BatchNormalization()(x)
+    x = tf.keras.layers.BatchNormalization()(x)
     x = tf.keras.layers.Flatten()(x)
     x = tf.keras.layers.Dense(256, activation="relu")(x)
     x = tf.keras.layers.Dropout(0.5)(x)
