@@ -160,5 +160,5 @@ history = model.fit(
 plot_graph(history)
 
 # save the weight
-weight_path = config.WEIGHT_PATH + 'E_net_weight'
+weight_path = config.WEIGHT_PATH + 'E_netB7_weight'
 model.save_weights(weight_path)
