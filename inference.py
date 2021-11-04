@@ -8,6 +8,8 @@ import config
 
 def load_images(imagePath):
 	# pass in the path of testing dataset
+	# since we're making inferences, there
+	# will be no labels
 	return image_dataset_from_directory(imagePath, labels=None, shuffle=False, label_mode=None, 
                                         batch_size=config.BATCH_SIZE, image_size=config.IMG_SIZE)
 
@@ -19,6 +21,7 @@ gdown.download(config.MODEL_URL, config.MODEL_NAME, quiet=False)
 model = tf.keras.models.load_model(config.MODEL_NAME)
 
 # make our inference
+print("[INFO] making inferences...")
 predictions = model.predict(test_dataset)
 
 # predictions are 200-dimentional vectors
@@ -43,7 +46,9 @@ with open(config.SAMPLE_ANSWER_PATH, "r") as f:
         evaluation_filenames.append(filename)
  
 # output the result
+print("[INFO] outputing results...")
 with open("answer.txt", "w") as f:
     for filename in evaluation_filenames:
         s = filename + ' ' + result[filename] + '\n'
         f.write(s)
+print("[INFO] inference completed")
