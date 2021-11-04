@@ -52,6 +52,9 @@ if not os.path.exists(WEIGHT_PATH):
     print("[INFO] creating '{}' directory".format(WEIGHT_PATH))
     os.makedirs(WEIGHT_PATH)
 
+# the name of base model
+BASE_MODEL_NAME = "basemodel.h5"
+
 # the link and name of the final model .h5 file
 MODEL_URL = "https://drive.google.com/u/0/uc?id=1-wnA207-0fuqKZMPL1r5lT_w9KqK2oKl&export=download"
 MODEL_NAME = "Enet_v2_finetuned_final.h5"
