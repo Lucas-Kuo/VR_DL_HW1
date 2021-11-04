@@ -2,9 +2,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import json
 import tensorflow as tf
 from tensorflow.data import AUTOTUNE
-from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.preprocessing import image_dataset_from_directory
 from tensorflow.keras.layers.experimental.preprocessing import RandomRotation, RandomZoom, RandomFlip
 from tensorflow.keras.applications.efficientnet import preprocess_input
 from imutils import paths
@@ -13,54 +14,9 @@ import config
 
 # for labeled images
 def load_images(imagePath):
-	# read the image from disk, decode it, convert the data type to
-	# floating point, and resize it
-	image = tf.io.read_file(imagePath)
-	image = tf.image.decode_png(image, channels=3)
-	image = tf.image.convert_image_dtype(image, dtype=tf.float32)
-	image = tf.image.resize(image, config.IMG_SIZE)
-    
-	# parse the class label from the file path
-	label = (tf.strings.split(imagePath, os.path.sep).numpy())[-2].decode('UTF-8')
-	label = tf.strings.to_number(label, tf.int32)
-	label = label.numpy()
-	label_vector = np.zeros((1,200))
-	label_vector[0][label-1] = 1
-	
-	# return the image and the label
-	return (image, label_vector)
-
-# build the model we'll be using
-def build_model():
-    # the base model I use this time is EfficientNet B7
-    base_model = tf.keras.applications.efficientnet.EfficientNetB7(input_shape=config.IMG_SHAPE,
-                                                                   include_top=False,
-                                                                   weights='imagenet')
-    # to perform transfer learning, we disable the
-    # trainability of the base model layers
-    base_model.trainable = False
-    
-    # the data augmentation I adopt includes horizontal flipping(Line 29),
-    # rotation and contrast adjustment
-#     data_augmentation = tf.keras.Sequential([
-#         RandomRotation(0.2),
-#         tf.keras.layers.RandomContrast(0.5, seed=None)
-#     ])
-    
-    # constructing the model
-    inputs = tf.keras.Input(shape=config.IMG_SHAPE)
-#     x = data_augmentation(inputs)
-    x = preprocess_input(inputs)
-    x = base_model(x, training=False)
-    x = tf.keras.layers.AveragePooling2D(pool_size=(19, 19))(x)
-    x = tf.keras.layers.BatchNormalization()(x)
-    x = tf.keras.layers.Flatten()(x)
-    x = tf.keras.layers.Dense(256, activation="relu")(x)
-    x = tf.keras.layers.Dropout(0.5)(x)
-    outputs = tf.keras.layers.Dense(len(config.CLASSES), activation="softmax", activity_regularizer=tf.keras.regularizers.L2(0.1))(x)
-    model = tf.keras.Model(inputs, outputs)
-    
-    return model
+    # pass in the image directory and set the class names
+	return image_dataset_from_directory(imagePath, shuffle=True, class_names=config.CLASSES, label_mode="categorical",
+                                        batch_size=config.BATCH_SIZE, image_size=config.IMG_SIZE)
 
 # plot out the training result, including loss(cross entropy) and accuracy
 def plot_graph(history):
@@ -84,71 +40,106 @@ def plot_graph(history):
     plt.plot(val_loss, label='Validation Loss')
     plt.legend(loc='upper right')
     plt.ylabel('Cross Entropy')
-    plt.ylim([0,6.0])
+    plt.ylim([0,3.0])
     plt.title('Training and Validation Loss')
     plt.xlabel('epoch')
     plt.show()
 
-# grab all the training and validation dataset image paths
-trainPaths = list(paths.list_images(config.TRAIN_PATH))
-valPaths = list(paths.list_images(config.VAL_PATH))
 
-# the data augmentation I adopt includes horizontal flipping,
-# rotation , zomming in and contrast adjustment
-trainAugmentation = tf.keras.Sequential([
-	RandomRotation(0.3),
-	tf.keras.layers.RandomContrast(0.5, seed=None),
-	RandomZoom(
-		height_factor=(-0.05, -0.15),
-		width_factor=(-0.05, -0.15)),
-	RandomFlip("horizontal")
-])
+# build the training dataset
+train_dataset = load_images(config.TRAIN_PATH)
 
-# build the training dataset and data input pipeline
-train_dataset = tf.data.Dataset.from_tensor_slices(trainPaths)
-train_dataset = (train_dataset
-	.shuffle(len(trainPaths))
-	.map(load_images, num_parallel_calls=AUTOTUNE)
-	.map(lambda x, y: (trainAugmentation(x), y), num_parallel_calls=AUTOTUNE)
-	.cache()
-	.batch(config.BATCH_SIZE)
-	.prefetch(AUTOTUNE)
-)
-
-# build the validation dataset and data input pipeline
-val_dataset = tf.data.Dataset.from_tensor_slices(valPaths)
-val_dataset = (val_dataset
-	.map(load_images, num_parallel_calls=AUTOTUNE)
-	.cache()
-	.batch(config.BATCH_SIZE)
-	.prefetch(AUTOTUNE)
-)
+# build the validation dataset
+val_dataset = load_images(config.VAL_PATH)
 
 # configuring the model
-model = build_model()
+print("[INFO] building model...")
+
+# the base model I use this time is EfficientNet v2 M
+base_model = tf.keras.models.load_model(config.BASE_MODEL_NAME)
+
+# to perform transfer learning, we disable the
+# trainability of the base model layers first
+base_model.trainable = False
+
+# the data augmentation I adopt includes horizontal flipping,
+# rotation and contrast adjustment
+ data_augmentation = tf.keras.Sequential([
+     tf.keras.layers.experimental.preprocessing.RandomFlip('horizontal'),
+     RandomRotation(0.2),
+     tf.keras.layers.RandomContrast(0.5, seed=None)
+ ])
+
+# constructing the model
+inputs = tf.keras.Input(shape=config.IMG_SHAPE)
+x = data_augmentation(inputs)
+x = base_model(x, training=False) # set training to False to avoid BN training
+x = tf.keras.layers.AveragePooling2D(pool_size=(15, 15))(x)
+x = tf.keras.layers.Flatten()(x)
+outputs = tf.keras.layers.Dense(len(config.CLASSES), activation="softmax", activity_regularizer=tf.keras.regularizers.L2(0.1))(x)
+model = tf.keras.Model(inputs, outputs)
+
 opt = tf.keras.optimizers.Adam(learning_rate=config.INIT_LR)
 model.compile(optimizer=opt,
               loss=tf.keras.losses.CategoricalCrossentropy(),
               metrics=['accuracy'])
 
-# initialize an early stopping callback to prevent the model from
-# overfitting
-es = EarlyStopping(
-	monitor="val_loss",
-	patience=config.EARLY_STOPPING_PATIENCE,
-	restore_best_weights=True)
-
-# fit the model
+# train the model
+print("[INFO] training model...")
 history = model.fit(
 	x=train_dataset,
 	validation_data=val_dataset,
-	epochs=config.NUM_EPOCHS,
-	callbacks=[es],
+	epochs=config.NUM_EPOCHS,,
 	verbose=1)
 
 # show the result
+print("[INFO] first part of training result:")
 plot_graph(history)
 
-# save the weight
-weight_path = config.WEIGHT_PATH + 'E_netB7_weight'
-model.save_weights(weight_path)
+# dump the result
+print("[INFO] saving training history1...")
+json.dump(history.history, open(config.HISTORY1, 'w'))
+
+# save the model
+print("[INFO] saving model1...")
+model.save(config.SAVE_MODEL1)
+
+# -------------------- Fine Tuning -------------------- #
+
+# Here's a detail: a layer is trainable
+# if and only if the whole model's trainable attribute is True
+# and the layer's trainable attribute is True
+# So Line 135 is essential. Doing it the opposite way won't work
+base_model.trainable = True
+fine_tune_at = 755
+for layer in model.layers[:fine_tune_at]:
+    layer.trainable = False
+print(f"[INFO] {base_model.trainable_variables} layers in the base model is now trainable")
+
+# configuring fine tuning setup
+opt = tf.keras.optimizers.RMSprop(learning_rate=config.INIT_LR/10) # set a smaller LR when fine tuning
+model.compile(optimizer=opt,
+              loss=tf.keras.losses.CategoricalCrossentropy(),
+              metrics=['accuracy'])
+
+# fine tuning
+print("[INFO] fine tuning...")
+total_epochs = config.NUM_EPOCHS * 2
+history2 = model1.fit(train_dataset,
+                     epochs=total_epochs,
+                     initial_epoch=history.epoch[-1],
+                     validation_data=validation_dataset)
+
+# show the result
+print("[INFO] second part of training result:")
+plot_graph(history2)
+
+# dump the result
+print("[INFO] saving training history2...")
+json.dump(history2.history, open(config.HISTORY2, 'w'))
+
+# save the model
+print("[INFO] saving model1...")
+model.save(config.SAVE_MODEL2)
+
+print("[INFO] training completed")
