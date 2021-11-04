@@ -33,16 +33,16 @@ for split in (TRAIN_PATH, VAL_PATH):
         if not os.path.exists(label_directory):
             print("[INFO] creating '{}' directory".format(label_directory))
             os.makedirs(label_directory)
- 
+
 
 # set the image size and shape
-IMG_SIZE = (480,480)
-IMG_SHAPE = IMG_SIZE + (3,)
+IMG_SIZE = (480, 480)
+IMG_SHAPE = IMG_SIZE + (3, )
 
 # set the batch size
 BATCH_SIZE = 32
 
-# initialize our number of epochs, early stopping patience, initial learning rate
+# initialize our number of epochs, initial learning rate
 NUM_EPOCHS = 30
 INIT_LR = 1e-3
 
