@@ -109,7 +109,7 @@ model.save(config.SAVE_MODEL1)
 # Here's a detail: a layer is trainable
 # if and only if the whole model's trainable attribute is True
 # and the layer's trainable attribute is True
-# So Line 135 is essential. Doing it the opposite way won't work
+# So Line 113 is essential. Doing it the opposite way won't work
 base_model.trainable = True
 fine_tune_at = 755
 for layer in model.layers[:fine_tune_at]:
