@@ -32,6 +32,6 @@ To build a convenient directory architecture, simply run config.py and build_dat
 ### Inference result
 The final inference result can be produced by simply running inference.py\
 `python3 inference.py`\
-It should create a text file called *answer.txt* and this is how you can get it.\
+It should create a text file called *answer.txt* and this is how you can get it.
 
 > Again, it's quite annoying and error-prone to follow the steps above. For simplicity, just open the .ipynb file and execute the cells.
