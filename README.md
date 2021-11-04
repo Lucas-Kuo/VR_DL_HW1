@@ -1,5 +1,5 @@
 # VR_DL_HW1
-> **It's strongly recommended to open up the .ipynb file and execute the cells one by one**\
+> **It's strongly recommended to open up the .ipynb file and execute the cells one by one**
 
 [Link](https://drive.google.com/file/d/1-wnA207-0fuqKZMPL1r5lT_w9KqK2oKl/view?usp=sharing) (.h5 file) to my final model if you can handle the rest of the work.\
 To reproduce the final submission, the following steps will show how you can do it.
