@@ -36,15 +36,14 @@ for split in (TRAIN_PATH, VAL_PATH):
  
 
 # set the image size and shape
-IMG_SIZE = (600,600)
+IMG_SIZE = (480,480)
 IMG_SHAPE = IMG_SIZE + (3,)
 
 # set the batch size
 BATCH_SIZE = 32
 
 # initialize our number of epochs, early stopping patience, initial learning rate
-NUM_EPOCHS = 40
-EARLY_STOPPING_PATIENCE = 5
+NUM_EPOCHS = 30
 INIT_LR = 1e-3
 
 # set the directory to save our trained model's weight
