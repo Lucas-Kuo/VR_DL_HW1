@@ -13,7 +13,7 @@ BASE_PATH = "dataset"
 # derive the training, validation, and testing directories
 TRAIN_PATH = os.path.sep.join([BASE_PATH, "training"])
 VAL_PATH = os.path.sep.join([BASE_PATH, "validation"])
-TEST_PATH = os.path.sep.join([BASE_PATH, "testing"])
+TEST_PATH = os.path.sep.join([BASE_PATH, "evaluation"])
 
 # initialize the list of class label names
 CLASSES = []
