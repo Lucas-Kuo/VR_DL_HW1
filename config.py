@@ -15,6 +15,9 @@ TRAIN_PATH = os.path.sep.join([BASE_PATH, "training"])
 VAL_PATH = os.path.sep.join([BASE_PATH, "validation"])
 TEST_PATH = os.path.sep.join([BASE_PATH, "evaluation"])
 
+# for getting the order of images to output answer
+SAMPLE_ANSWER_PATH = os.path.sep.join(["self_utils", "sample_answer.txt"])
+
 # initialize the list of class label names
 CLASSES = []
 CLASS_NAMES_FILE = "classes.txt"
