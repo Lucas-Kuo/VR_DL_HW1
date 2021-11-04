@@ -5,16 +5,20 @@ import os
 import json
 import tensorflow as tf
 from tensorflow.keras.preprocessing import image_dataset_from_directory
-from tensorflow.keras.layers.experimental.preprocessing import RandomRotation, RandomZoom, RandomFlip
+from tensorflow.keras.layers.experimental.preprocessing import RandomRotation
 from imutils import paths
 
 import config
 
+
 # for labeled images
 def load_images(imagePath):
     # pass in the image directory and set the class names
-	return image_dataset_from_directory(imagePath, shuffle=True, class_names=config.CLASSES, label_mode="categorical",
-                                        batch_size=config.BATCH_SIZE, image_size=config.IMG_SIZE)
+    return image_dataset_from_directory(
+        imagePath, shuffle=True, class_names=config.CLASSES,
+        label_mode="categorical", batch_size=config.BATCH_SIZE,
+        image_size=config.IMG_SIZE)
+
 
 # plot out the training result, including loss(cross entropy) and accuracy
 def plot_graph(history):
@@ -30,7 +34,7 @@ def plot_graph(history):
     plt.plot(val_acc, label='Validation Accuracy')
     plt.legend(loc='lower right')
     plt.ylabel('Accuracy')
-    plt.ylim([min(plt.ylim()),1])
+    plt.ylim([min(plt.ylim()), 1])
     plt.title('Training and Validation Accuracy')
 
     plt.subplot(2, 1, 2)
@@ -38,7 +42,7 @@ def plot_graph(history):
     plt.plot(val_loss, label='Validation Loss')
     plt.legend(loc='upper right')
     plt.ylabel('Cross Entropy')
-    plt.ylim([0,3.0])
+    plt.ylim([0, 3.0])
     plt.title('Training and Validation Loss')
     plt.xlabel('epoch')
     plt.show()
@@ -62,33 +66,37 @@ base_model.trainable = False
 
 # the data augmentation I adopt includes horizontal flipping,
 # rotation and contrast adjustment
- data_augmentation = tf.keras.Sequential([
+data_augmentation = tf.keras.Sequential([
      tf.keras.layers.experimental.preprocessing.RandomFlip('horizontal'),
      RandomRotation(0.2),
      tf.keras.layers.RandomContrast(0.5, seed=None)
- ])
+])
 
 # constructing the model
 inputs = tf.keras.Input(shape=config.IMG_SHAPE)
 x = data_augmentation(inputs)
-x = base_model(x, training=False) # set training to False to avoid BN training
+x = base_model(x, training=False)  # set training to False to avoid BN training
 x = tf.keras.layers.AveragePooling2D(pool_size=(15, 15))(x)
 x = tf.keras.layers.Flatten()(x)
-outputs = tf.keras.layers.Dense(len(config.CLASSES), activation="softmax", activity_regularizer=tf.keras.regularizers.L2(0.1))(x)
+outputs = tf.keras.layers.Dense(
+    len(config.CLASSES), activation="softmax",
+    activity_regularizer=tf.keras.regularizers.L2(0.1))(x)
 model = tf.keras.Model(inputs, outputs)
 
 opt = tf.keras.optimizers.Adam(learning_rate=config.INIT_LR)
-model.compile(optimizer=opt,
-              loss=tf.keras.losses.CategoricalCrossentropy(),
-              metrics=['accuracy'])
+
+model.compile(
+    optimizer=opt,
+    loss=tf.keras.losses.CategoricalCrossentropy(),
+    metrics=['accuracy'])
 
 # train the model
 print("[INFO] training model...")
 history = model.fit(
-	x=train_dataset,
-	validation_data=val_dataset,
-	epochs=config.NUM_EPOCHS,,
-	verbose=1)
+    x=train_dataset,
+    validation_data=val_dataset,
+    epochs=config.NUM_EPOCHS,
+    verbose=1)
 
 # show the result
 print("[INFO] first part of training result:")
@@ -112,10 +120,13 @@ base_model.trainable = True
 fine_tune_at = 755
 for layer in model.layers[:fine_tune_at]:
     layer.trainable = False
-print(f"[INFO] {base_model.trainable_variables} layers in the base model is now trainable")
+print(f"[INFO] {base_model.trainable_variables} \
+    layers in the base model is now trainable")
 
 # configuring fine tuning setup
-opt = tf.keras.optimizers.RMSprop(learning_rate=config.INIT_LR/10) # set a smaller LR when fine tuning
+
+# set a smaller LR when fine tuning
+opt = tf.keras.optimizers.RMSprop(learning_rate=config.INIT_LR/10)
 model.compile(optimizer=opt,
               loss=tf.keras.losses.CategoricalCrossentropy(),
               metrics=['accuracy'])
@@ -123,10 +134,11 @@ model.compile(optimizer=opt,
 # fine tuning
 print("[INFO] fine tuning...")
 total_epochs = config.NUM_EPOCHS * 2
-history2 = model1.fit(train_dataset,
-                     epochs=total_epochs,
-                     initial_epoch=history.epoch[-1],
-                     validation_data=validation_dataset)
+history2 = model1.fit(
+    train_dataset,
+    epochs=total_epochs,
+    initial_epoch=history.epoch[-1],
+    validation_data=validation_dataset)
 
 # show the result
 print("[INFO] second part of training result:")
