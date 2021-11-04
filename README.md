@@ -8,18 +8,20 @@ To reproduce the final submission, the following steps will show how you can do 
 4. [Inference result](#inference-result)
 
 ### Cloning this repo
-You can clone this repo in many ways, but the easiest is
+You can clone this repo in many ways, but the easiest is\
 `git clone https://github.com/Lucas-Kuo/VR_DL_HW1.git`
 
 ### Downloading files
 It's a must to download the dataset.
 I'm providing a link to my Google drive [here](https://drive.google.com/file/d/1dYt4iLy0euxVXordHq4RRHgWojgUjgIf/view?usp=sharing).
-If you have [gdown](https://github.com/wkentaro/gdown) in your environment, it's also fine to run
-`gdown https://drive.google.com/u/0/uc?id=1dYt4iLy0euxVXordHq4RRHgWojgUjgIf&export=download` on command line
+If you have [gdown](https://github.com/wkentaro/gdown) in your environment, it's also fine to run\
+`gdown https://drive.google.com/u/0/uc?id=1dYt4iLy0euxVXordHq4RRHgWojgUjgIf&export=download`\
+on command line
 
 It should be a zip file called *2021VRDL_HW1_datasets.zip*. Unzip it and you will see another zip file called *testing_images.zip*.\
 Now make a folder called *dataset* and in that directory, build a subdirectory called *evaluation*. And then unzip *testing_images.zip* into *dataset/evaluation*.
-On command line, you can run `unzip testing_images.zip -d dataset/evaluation`.
+On command line, you can run\
+`unzip testing_images.zip -d dataset/evaluation`.
 
 Now, your *VR_DL_HW1/dataset/evaluation* should contain 3033 images.\
 **Make sure we're still on the same page so far.**
