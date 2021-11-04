@@ -6,12 +6,14 @@ from tensorflow.keras.preprocessing import image_dataset_from_directory
 
 import config
 
+
 def load_images(imagePath):
-	# pass in the path of testing dataset
-	# since we're making inferences, there
-	# will be no labels
-	return image_dataset_from_directory(imagePath, labels=None, shuffle=False, label_mode=None, 
-                                        batch_size=config.BATCH_SIZE, image_size=config.IMG_SIZE)
+    # pass in the path of testing dataset
+    # since we're making inferences, there will be no labels
+    return image_dataset_from_directory(
+        imagePath, labels=None, shuffle=False, label_mode=None,
+        batch_size=config.BATCH_SIZE, image_size=config.IMG_SIZE)
+
 
 # load testing dataset
 test_dataset = load_images(config.TEST_PATH)
@@ -26,7 +28,7 @@ predictions = model.predict(test_dataset)
 
 # predictions are 200-dimentional vectors
 # we only keep the largest ones' indices
-output = list(np.argmax(predictions, axis = 1))
+output = list(np.argmax(predictions, axis=1))
 
 # map the image file names to their respective result
 result = {}
@@ -44,7 +46,7 @@ with open(config.SAMPLE_ANSWER_PATH, "r") as f:
         # by a space
         filename = line.split()[0]
         evaluation_filenames.append(filename)
- 
+
 # output the result
 print("[INFO] outputing results...")
 with open("answer.txt", "w") as f:
