@@ -2,12 +2,9 @@ import numpy as np
 import os
 import tensorflow as tf
 import gdown
-
-from imutils import paths
 from tensorflow.keras.preprocessing import image_dataset_from_directory
 
 import config
-from train_model import build_model, weight_path
 
 def load_images(imagePath):
 	# pass in the path of testing dataset
