@@ -55,7 +55,14 @@ if not os.path.exists(WEIGHT_PATH):
 # the name of base model
 BASE_MODEL_NAME = "efficientnetv2-m-21k.h5"
 
+# saving training model
+SAVE_MODEL1 = "save_model1.h5"
+SAVE_MODEL2 = "save_model2.h5"
+
 # the link and name of the final model .h5 file
 MODEL_URL = "https://drive.google.com/u/0/uc?id=1-wnA207-0fuqKZMPL1r5lT_w9KqK2oKl&export=download"
 MODEL_NAME = "Enet_v2_finetuned_final.h5"
 
+# file names for training histories
+HISTORY1 = "history1.json"
+HISTORY2 = "history2.json"
