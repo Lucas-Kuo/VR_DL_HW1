@@ -4,10 +4,8 @@ import numpy as np
 import os
 import json
 import tensorflow as tf
-from tensorflow.data import AUTOTUNE
 from tensorflow.keras.preprocessing import image_dataset_from_directory
 from tensorflow.keras.layers.experimental.preprocessing import RandomRotation, RandomZoom, RandomFlip
-from tensorflow.keras.applications.efficientnet import preprocess_input
 from imutils import paths
 
 import config
