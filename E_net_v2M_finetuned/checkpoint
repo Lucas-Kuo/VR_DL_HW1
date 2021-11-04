@@ -1,2 +1,0 @@
-model_checkpoint_path: "E_net_v2_finetuned2_checkpoint"
-all_model_checkpoint_paths: "E_net_v2_finetuned2_checkpoint"
